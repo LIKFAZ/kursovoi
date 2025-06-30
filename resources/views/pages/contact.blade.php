@@ -19,13 +19,39 @@
             <div>
                 <h2 class="text-2xl font-bold mb-6">Отправить сообщение</h2>
                 
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm">{{ session('success') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm">{{ session('error') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
                     @csrf
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Имя *</label>
                         <input type="text" name="name" value="{{ old('name') }}" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror">
                         @error('name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -34,7 +60,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
                         <input type="email" name="email" value="{{ old('email') }}" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') border-red-500 @enderror">
                         @error('email')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -43,7 +69,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Тема *</label>
                         <input type="text" name="subject" value="{{ old('subject') }}" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('subject') border-red-500 @enderror">
                         @error('subject')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -52,14 +78,15 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Сообщение *</label>
                         <textarea name="message" rows="6" required
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('message') }}</textarea>
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
                         @error('message')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <button type="submit" 
-                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
+                            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-2"></i>
                         Отправить сообщение
                     </button>
                 </form>
@@ -76,7 +103,7 @@
                         </div>
                         <div>
                             <h3 class="font-semibold mb-1">Адрес</h3>
-                            <p class="text-gray-600">г. Москва, ул. Рыбацкая, д. 123, офис 45</p>
+                            <p class="text-gray-600">{{ $mapData['address'] }}</p>
                         </div>
                     </div>
 
@@ -118,16 +145,16 @@
                 <div class="mt-8">
                     <h3 class="font-semibold mb-4">Мы в социальных сетях</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition duration-300">
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition duration-300">
                             <i class="fab fa-vk"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-blue-500 text-white rounded-lg flex items-center justify-center hover:bg-blue-600 transition duration-300">
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="w-10 h-10 bg-blue-500 text-white rounded-lg flex items-center justify-center hover:bg-blue-600 transition duration-300">
                             <i class="fab fa-telegram"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-red-600 text-white rounded-lg flex items-center justify-center hover:bg-red-700 transition duration-300">
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="w-10 h-10 bg-red-600 text-white rounded-lg flex items-center justify-center hover:bg-red-700 transition duration-300">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition duration-300">
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center hover:bg-pink-700 transition duration-300">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
@@ -136,9 +163,16 @@
                 <!-- Map -->
                 <div class="mt-8">
                     <h3 class="font-semibold mb-4">Как нас найти</h3>
-                    <div class="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-                        <p class="text-gray-600">Здесь будет карта</p>
-                        <!-- Здесь можно интегрировать Яндекс.Карты или Google Maps -->
+                    <div class="h-64 rounded-lg overflow-hidden shadow-md">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.7!2d37.6173!3d55.7558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a50b315e573%3A0xa886bf5a3d9b2e68!2z0KDQtdC00L3QsNGPINC_0LvQvtGJ0LDQtNGMLCDQnNC-0YHQutCy0LAsINCg0L7RgdGB0LjRjw!5e0!3m2!1sru!2sru!4v1234567890123!5m2!1sru!2sru"
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div>
             </div>

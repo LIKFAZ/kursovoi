@@ -51,6 +51,7 @@ class OrderController extends Controller
         return view('orders.create', compact('cartItems', 'total'));
     }
     
+    // Изменим метод store, чтобы проверять наличие товаров перед оформлением заказа
     public function store(Request $request)
     {
         $request->validate([
@@ -68,10 +69,21 @@ class OrderController extends Controller
         
         $total = 0;
         $orderItems = [];
+        $outOfStockItems = [];
         
         foreach ($cart as $id => $details) {
             $product = Product::find($id);
-            if ($product && $product->stock >= $details['quantity']) {
+            if ($product) {
+                // Проверяем наличие товара на складе
+                if ($product->stock < $details['quantity']) {
+                    if ($product->stock > 0) {
+                        $outOfStockItems[] = $product->name . ' (доступно: ' . $product->stock . ' шт.)';
+                    } else {
+                        $outOfStockItems[] = $product->name . ' (нет в наличии)';
+                    }
+                    continue;
+                }
+                
                 $subtotal = $product->current_price * $details['quantity'];
                 $total += $subtotal;
                 
@@ -80,10 +92,17 @@ class OrderController extends Controller
                     'quantity' => $details['quantity'],
                     'price' => $product->current_price,
                 ];
-                
-                // Уменьшаем количество товара на складе
-                $product->decrement('stock', $details['quantity']);
             }
+        }
+        
+        // Если есть товары не в наличии, возвращаем ошибку
+        if (!empty($outOfStockItems)) {
+            return redirect()->route('cart.index')->with('error', 'Некоторые товары отсутствуют на складе или их количество недостаточно: ' . implode(', ', $outOfStockItems));
+        }
+        
+        // Если п��сле проверки наличия товаров корзина пуста, возвращаем ошибку
+        if (empty($orderItems)) {
+            return redirect()->route('cart.index')->with('error', 'Не удалось оформить заказ. Все товары отсутствуют на складе.');
         }
         
         $order = Order::create([
@@ -99,6 +118,10 @@ class OrderController extends Controller
         
         foreach ($orderItems as $item) {
             $order->items()->create($item);
+            
+            // Уменьшаем количество товара на складе
+            $product = Product::find($item['product_id']);
+            $product->decrement('stock', $item['quantity']);
         }
         
         // Очищаем корзину

@@ -31,7 +31,7 @@
                 </p>
             </div>
             <div>
-                <img src="/placeholder.svg?height=400&width=600" alt="О нас" 
+                <img src="/images/about/store.jpg" alt="О нас" 
                      class="w-full h-96 object-cover rounded-lg shadow-lg">
             </div>
         </div>
@@ -71,27 +71,26 @@
         <div class="text-center mb-16">
             <h2 class="text-3xl font-bold mb-8">Наша команда</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach($teamMembers as $member)
                 <div class="text-center">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Алексей Иванов" 
+                    <img src="/{{ $member['image'] }}" alt="{{ $member['name'] }}" 
                          class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
-                    <h4 class="text-lg font-semibold">Алексей Иванов</h4>
-                    <p class="text-gray-600">Основатель и CEO</p>
-                    <p class="text-sm text-gray-500 mt-2">Рыболов с 20-летним стажем</p>
+                    <h4 class="text-lg font-semibold">{{ $member['name'] }}</h4>
+                    <p class="text-gray-600">{{ $member['position'] }}</p>
+                    <p class="text-sm text-gray-500 mt-2">{{ $member['description'] }}</p>
                 </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Мария Петрова" 
-                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
-                    <h4 class="text-lg font-semibold">Мария Петрова</h4>
-                    <p class="text-gray-600">Менеджер по продажам</p>
-                    <p class="text-sm text-gray-500 mt-2">Эксперт по снастям</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Дмитрий Сидоров" 
-                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
-                    <h4 class="text-lg font-semibold">Дмитрий Сидоров</h4>
-                    <p class="text-gray-600">Технический директор</p>
-                    <p class="text-sm text-gray-500 mt-2">Разработчик платформы</p>
-                </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">Наш магазин</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <img src="/images/about/gallery-1.jpg" alt="Магазин" class="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <img src="/images/about/gallery-2.jpg" alt="Магазин" class="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <img src="/images/about/gallery-3.jpg" alt="Магазин" class="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <img src="/images/about/gallery-4.jpg" alt="Магазин" class="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow">
             </div>
         </div>
 

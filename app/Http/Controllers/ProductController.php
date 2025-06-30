@@ -11,7 +11,9 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::where('is_active', true)->with('category');
+        $query = Product::where('is_active', true)
+        ->where('stock', '>', 0)  // Добавляем проверку наличия товара
+        ->with('category');
         
         // Фильтрация по категории
         if ($request->category) {
@@ -71,13 +73,17 @@ class ProductController extends Controller
             ->with(['category', 'reviews.user'])
             ->firstOrFail();
         
+        // Если товара нет в наличии, показываем соответствующее сообщение
+        $inStock = $product->stock > 0;
+        
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
+            ->where('stock', '>', 0)  // Только товары в наличии
             ->take(4)
             ->get();
         
-        return view('products.show', compact('product', 'relatedProducts'));
+        return view('products.show', compact('product', 'relatedProducts', 'inStock'));
     }
     
     public function storeReview(Request $request, Product $product)

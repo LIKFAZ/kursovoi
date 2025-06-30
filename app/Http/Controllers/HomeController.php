@@ -11,6 +11,7 @@ class HomeController extends Controller
     public function index()
     {
         $featuredProducts = Product::where('is_active', true)
+            ->where('stock', '>', 0)  // Только товары в наличии
             ->latest()
             ->take(8)
             ->get();

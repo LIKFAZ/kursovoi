@@ -28,16 +28,41 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'total'));
     }
     
+    // Изменим метод add, чтобы проверять наличие товара перед добавлением в корзину
     public function add(Request $request)
     {
         $product = Product::findOrFail($request->product_id);
-        $cart = session()->get('cart', []);
         
+        // Проверяем наличие товара
+        if ($product->stock <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Товар отсутствует на складе!',
+            ], 400);
+        }
+        
+        $cart = session()->get('cart', []);
+        $quantity = $request->quantity ?? 1;
+        
+        // Проверяем, не превышает ли запрашиваемое количество доступное на складе
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $request->quantity ?? 1;
+            $newQuantity = $cart[$product->id]['quantity'] + $quantity;
+            if ($newQuantity > $product->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Недостаточно товара на складе! Доступно: ' . $product->stock . ' шт.',
+                ], 400);
+            }
+            $cart[$product->id]['quantity'] = $newQuantity;
         } else {
+            if ($quantity > $product->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Недостаточно товара на складе! Доступно: ' . $product->stock . ' шт.',
+                ], 400);
+            }
             $cart[$product->id] = [
-                'quantity' => $request->quantity ?? 1,
+                'quantity' => $quantity,
             ];
         }
         
@@ -50,11 +75,18 @@ class CartController extends Controller
         ]);
     }
     
+    // Изменим метод update, чтобы проверять наличие товара при обновлении корзины
     public function update(Request $request)
     {
         $cart = session()->get('cart', []);
         
         if (isset($cart[$request->product_id])) {
+            // Проверяем наличие товара на складе
+            $product = Product::findOrFail($request->product_id);
+            if ($request->quantity > $product->stock) {
+                return back()->with('error', 'Недостаточно товара на складе! Доступно: ' . $product->stock . ' шт.');
+            }
+            
             $cart[$request->product_id]['quantity'] = $request->quantity;
             session()->put('cart', $cart);
         }
