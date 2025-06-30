@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Filters Sidebar -->
+        <!-- фильтры -->
         <div class="lg:w-1/4">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-semibold mb-4">Фильтры</h3>
@@ -19,7 +19,7 @@
                                placeholder="Название товара...">
                     </div>
 
-                    <!-- Category -->
+                    <!-- категории -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Категория</label>
                         <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -32,7 +32,7 @@
                         </select>
                     </div>
 
-                    <!-- Brand -->
+                    <!-- бренд -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Бренд</label>
                         <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -45,7 +45,7 @@
                         </select>
                     </div>
 
-                    <!-- Price Range -->
+                    <!-- цена -->
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Цена</label>
                         <div class="flex space-x-2">
@@ -93,6 +93,9 @@
                             <p class="text-gray-600 text-sm mb-2">{{ $product->brand }}</p>
                             <p class="text-gray-600 text-sm mb-2">{{ $product->category->name }}</p>
                             
+                            <!-- Short description -->
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ $product->short_description }}</p>
+                            
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     @if($product->sale_price)
@@ -113,10 +116,17 @@
                                    class="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded text-center hover:bg-gray-300 transition duration-300">
                                     Подробнее
                                 </a>
-                                <button onclick="addToCart({{ $product->id }})" 
-                                        class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
-                                    В корзину
-                                </button>
+                                @if($product->stock > 0)
+                                    <button onclick="addToCart({{ $product->id }})" 
+                                            class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
+                                        В корзину
+                                    </button>
+                                @else
+                                    <button disabled
+                                            class="flex-1 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed">
+                                        Нет в наличии
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -137,4 +147,13 @@
         </div>
     </div>
 </div>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
 @endsection

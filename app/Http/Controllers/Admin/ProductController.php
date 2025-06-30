@@ -36,15 +36,11 @@ class ProductController extends Controller
                 'brand' => 'required|string|max:255',
                 'category_id' => 'required|exists:categories,id',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
             
             // Создаем директории если их нет
             if (!Storage::disk('public')->exists('products')) {
                 Storage::disk('public')->makeDirectory('products');
-            }
-            if (!Storage::disk('public')->exists('products/gallery')) {
-                Storage::disk('public')->makeDirectory('products/gallery');
             }
             
             // Загрузка основного изображения
@@ -57,18 +53,6 @@ class ProductController extends Controller
                 Log::info('Image uploaded: ' . $imagePath);
             }
             
-            // Загрузка галереи изображений
-            $galleryPaths = [];
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $galleryImage) {
-                    $galleryName = time() . '_' . Str::random(10) . '.' . $galleryImage->getClientOriginalExtension();
-                    $galleryPath = $galleryImage->storeAs('products/gallery', $galleryName, 'public');
-                    $galleryPaths[] = $galleryPath;
-                    
-                    Log::info('Gallery image uploaded: ' . $galleryPath);
-                }
-            }
-            
             $product = Product::create([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
@@ -79,7 +63,6 @@ class ProductController extends Controller
                 'brand' => $request->brand,
                 'category_id' => $request->category_id,
                 'image' => $imagePath,
-                'gallery' => $galleryPaths,
                 'is_active' => true,
             ]);
             
@@ -111,7 +94,6 @@ class ProductController extends Controller
                 'brand' => 'required|string|max:255',
                 'category_id' => 'required|exists:categories,id',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
             
             $imagePath = $product->image;
@@ -130,18 +112,6 @@ class ProductController extends Controller
                 Log::info('Image updated: ' . $imagePath);
             }
             
-            // Обновление галереи
-            $galleryPaths = $product->gallery ?? [];
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $galleryImage) {
-                    $galleryName = time() . '_' . Str::random(10) . '.' . $galleryImage->getClientOriginalExtension();
-                    $galleryPath = $galleryImage->storeAs('products/gallery', $galleryName, 'public');
-                    $galleryPaths[] = $galleryPath;
-                    
-                    Log::info('Gallery image added: ' . $galleryPath);
-                }
-            }
-            
             $product->update([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
@@ -152,7 +122,6 @@ class ProductController extends Controller
                 'brand' => $request->brand,
                 'category_id' => $request->category_id,
                 'image' => $imagePath,
-                'gallery' => $galleryPaths,
             ]);
             
             return redirect()->route('admin.products.index')->with('success', 'Товар обновлен успешно!');
@@ -166,17 +135,9 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            // Удаляем изображения при удалении товара
+            // Удаляем изображение при удалении товара
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
-            }
-            
-            if ($product->gallery) {
-                foreach ($product->gallery as $galleryImage) {
-                    if (Storage::disk('public')->exists($galleryImage)) {
-                        Storage::disk('public')->delete($galleryImage);
-                    }
-                }
             }
             
             $product->delete();
@@ -185,35 +146,6 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             Log::error('Error deleting product: ' . $e->getMessage());
             return back()->with('error', 'Ошибка при удалении товара: ' . $e->getMessage());
-        }
-    }
-    
-    public function removeGalleryImage(Request $request, Product $product)
-    {
-        try {
-            $imageIndex = $request->input('image_index');
-            $gallery = $product->gallery ?? [];
-            
-            if (isset($gallery[$imageIndex])) {
-                // Удаляем файл
-                if (Storage::disk('public')->exists($gallery[$imageIndex])) {
-                    Storage::disk('public')->delete($gallery[$imageIndex]);
-                }
-                
-                // Удаляем из массива
-                unset($gallery[$imageIndex]);
-                $gallery = array_values($gallery); // Переиндексируем массив
-                
-                $product->update(['gallery' => $gallery]);
-                
-                return back()->with('success', 'Изображение удалено!');
-            }
-            
-            return back()->with('error', 'Изображение не найдено!');
-            
-        } catch (\Exception $e) {
-            Log::error('Error removing gallery image: ' . $e->getMessage());
-            return back()->with('error', 'Ошибка при удалении изображения: ' . $e->getMessage());
         }
     }
 }

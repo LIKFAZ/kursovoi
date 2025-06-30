@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -59,9 +60,11 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     
+    // Управление категориями
+    Route::resource('categories', AdminCategoryController::class);
+    
     // Управление товарами
     Route::resource('products', AdminProductController::class);
-    Route::delete('/products/{product}/gallery', [AdminProductController::class, 'removeGalleryImage'])->name('products.gallery.remove');
     
     // Управление заказами
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');

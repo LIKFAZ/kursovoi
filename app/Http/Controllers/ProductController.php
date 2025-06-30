@@ -76,6 +76,12 @@ class ProductController extends Controller
         // Если товара нет в наличии, показываем соответствующее сообщение
         $inStock = $product->stock > 0;
         
+        // Проверяем, оставлял ли текущий пользователь отзыв
+        $userHasReview = false;
+        if (auth()->check()) {
+            $userHasReview = $product->reviews()->where('user_id', auth()->id())->exists();
+        }
+        
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
@@ -83,11 +89,20 @@ class ProductController extends Controller
             ->take(4)
             ->get();
         
-        return view('products.show', compact('product', 'relatedProducts', 'inStock'));
+        return view('products.show', compact('product', 'relatedProducts', 'inStock', 'userHasReview'));
     }
     
     public function storeReview(Request $request, Product $product)
     {
+        // Проверяем, не оставлял ли пользователь уже отзыв
+        $existingReview = Review::where('user_id', auth()->id())
+            ->where('product_id', $product->id)
+            ->first();
+            
+        if ($existingReview) {
+            return back()->with('error', 'Вы уже оставили отзыв к этому товару. Каждый пользователь может оставить только один отзыв на товар.');
+        }
+        
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:1000',

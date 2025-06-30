@@ -14,10 +14,10 @@
     </div>
 </section>
 
-<!-- Categories Section -->
+<!-- категории на главной -->
 <section class="py-16">
     <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Популярные категории</h2>
+        <h2 class="old text-centtext-3xl font-ber mb-12">Популярные категории</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
             @foreach($categories as $category)
             <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition duration-300">
@@ -33,7 +33,7 @@
     </div>
 </section>
 
-<!-- Featured Products -->
+<!-- реки -->
 <section class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
         <h2 class="text-3xl font-bold text-center mb-12">Рекомендуемые товары</h2>

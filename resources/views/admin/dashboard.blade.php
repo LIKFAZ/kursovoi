@@ -62,16 +62,24 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold mb-4">Быстрые действия</h2>
             <div class="space-y-3">
+                <a href="{{ route('admin.categories.create') }}" 
+                   class="block w-full bg-green-600 text-white text-center py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Добавить категорию
+                </a>
                 <a href="{{ route('admin.products.create') }}" 
                    class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
                     <i class="fas fa-plus mr-2"></i>Добавить товар
+                </a>
+                <a href="{{ route('admin.categories.index') }}" 
+                   class="block w-full bg-purple-600 text-white text-center py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-300">
+                    <i class="fas fa-list mr-2"></i>Управление категориями
                 </a>
                 <a href="{{ route('admin.products.index') }}" 
                    class="block w-full bg-gray-600 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300">
                     <i class="fas fa-box mr-2"></i>Управление товарами
                 </a>
                 <a href="{{ route('admin.orders.index') }}" 
-                   class="block w-full bg-green-600 text-white text-center py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                   class="block w-full bg-orange-600 text-white text-center py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-300">
                     <i class="fas fa-shopping-cart mr-2"></i>Управление заказами
                 </a>
             </div>
@@ -110,6 +118,7 @@
                         </div>
                     @endforeach
                 </div>
+                
                 <div class="mt-4">
                     <a href="{{ route('admin.orders.index') }}" 
                        class="text-blue-600 hover:text-blue-800">

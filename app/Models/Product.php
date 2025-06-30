@@ -19,13 +19,11 @@ class Product extends Model
         'stock',
         'brand',
         'image',
-        'gallery',
         'category_id',
         'is_active',
     ];
 
     protected $casts = [
-        'gallery' => 'array',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
         'sale_price' => 'decimal:2',
@@ -65,14 +63,11 @@ class Product extends Model
         return '/placeholder.svg?height=300&width=300';
     }
     
-    // Получение URLs галереи
-    public function getGalleryUrlsAttribute()
+    // Получение краткого описания (первые 150 символов)
+    public function getShortDescriptionAttribute()
     {
-        if ($this->gallery) {
-            return array_map(function($image) {
-                return Storage::url($image);
-            }, $this->gallery);
-        }
-        return [];
+        return mb_strlen($this->description) > 150 
+            ? mb_substr($this->description, 0, 150) . '...' 
+            : $this->description;
     }
 }

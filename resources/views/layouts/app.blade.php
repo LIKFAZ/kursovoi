@@ -14,7 +14,7 @@
     <header class="bg-white shadow-md">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
+                <!-- лого -->
                 <div class="flex items-center">
                     <a href="{{ route('home') }}" class="text-2xl font-bold text-blue-600">
                         <i class="fas fa-fish mr-2"></i>
@@ -22,7 +22,7 @@
                     </a>
                 </div>
 
-                <!-- Navigation -->
+                <!-- навигация -->
                 <nav class="hidden md:flex space-x-8">
                     <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600 {{ request()->routeIs('home') ? 'text-blue-600 font-semibold' : '' }}">Главная</a>
                     <a href="{{ route('products.index') }}" class="text-gray-700 hover:text-blue-600 {{ request()->routeIs('products.*') ? 'text-blue-600 font-semibold' : '' }}">Каталог</a>
@@ -30,9 +30,9 @@
                     <a href="{{ route('contact') }}" class="text-gray-700 hover:text-blue-600 {{ request()->routeIs('contact') ? 'text-blue-600 font-semibold' : '' }}">Контакты</a>
                 </nav>
 
-                <!-- User Actions -->
+                
                 <div class="flex items-center space-x-4">
-                    <!-- Search -->
+                    <!-- поиск -->
                     <form action="{{ route('products.index') }}" method="GET" class="hidden md:block">
                         <div class="relative">
                             <input type="text" name="search" placeholder="Поиск товаров..." 
@@ -118,19 +118,24 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Каталог</h3>
                     <ul class="space-y-2 text-gray-300">
-                        <li><a href="#" class="hover:text-white">Удочки</a></li>
-                        <li><a href="#" class="hover:text-white">Катушки</a></li>
-                        <li><a href="#" class="hover:text-white">Приманки</a></li>
-                        <li><a href="#" class="hover:text-white">Аксессуары</a></li>
+                        <li><a href="{{ route('products.index', ['category' => 'udocki']) }}" class="hover:text-white">Удочки</a></li>
+                        <li><a href="{{ route('products.index', ['category' => 'katuski']) }}" class="hover:text-white">Катушки</a></li>
+                        <li><a href="{{ route('products.index', ['category' => 'snasti']) }}" class="hover:text-white">Снасти</a></li>
+                        <li><a href="{{ route('products.index', ['category' => 'leski']) }}" class="hover:text-white">Лески</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Информация</h3>
                     <ul class="space-y-2 text-gray-300">
-                        <li><a href="#" class="hover:text-white">О нас</a></li>
-                        <li><a href="#" class="hover:text-white">Доставка</a></li>
-                        <li><a href="#" class="hover:text-white">Оплата</a></li>
-                        <li><a href="#" class="hover:text-white">Контакты</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-white">О нас</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-white">Контакты</a></li>
+                        @auth
+                            <li><a href="{{ route('orders.index') }}" class="hover:text-white">Мои заказы</a></li>
+                            <li><a href="{{ route('profile.show') }}" class="hover:text-white">Профиль</a></li>
+                        @else
+                            <li><a href="{{ route('login') }}" class="hover:text-white">Вход</a></li>
+                            <li><a href="{{ route('register') }}" class="hover:text-white">Регистрация</a></li>
+                        @endauth
                     </ul>
                 </div>
                 <div>
@@ -139,6 +144,20 @@
                         <p><i class="fas fa-phone mr-2"></i> +7 (999) 123-45-67</p>
                         <p><i class="fas fa-envelope mr-2"></i> info@fishstore.ru</p>
                         <p><i class="fas fa-map-marker-alt mr-2"></i> г. Москва, ул. Рыбацкая, 123</p>
+                        <div class="flex space-x-3 mt-4">
+                            <a href="#" class="text-gray-300 hover:text-white" title="ВКонтакте">
+                                <i class="fab fa-vk text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white" title="Telegram">
+                                <i class="fab fa-telegram text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white" title="YouTube">
+                                <i class="fab fa-youtube text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-300 hover:text-white" title="Instagram">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,37 +167,46 @@
         </div>
     </footer>
 
-    <script>
-        // CSRF token для AJAX запросов
-        window.Laravel = {
-            csrfToken: '{{ csrf_token() }}'
-        };
+    <!-- Обновим функцию addToCart в JavaScript для обработки ошибок -->
+<script>
+    // CSRF token для AJAX запросов
+    window.Laravel = {
+        csrfToken: '{{ csrf_token() }}'
+    };
 
-        // Функция добавления товара в корзину
-        function addToCart(productId, quantity = 1) {
-            fetch('{{ route("cart.add") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: quantity
-                })
+    // Функция добавления товара в корзину
+    function addToCart(productId, quantity = 1) {
+        fetch('{{ route("cart.add") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: quantity
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('cart-count').textContent = data.cart_count;
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Произошла ошибка при добавлении товара в корзину');
-            });
-        }
-    </script>
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Произошла ошибка при добавлении товара в корзину');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                document.getElementById('cart-count').textContent = data.cart_count;
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message);
+        });
+    }
+</script>
+    @stack('scripts')
 </body>
 </html>

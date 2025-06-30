@@ -26,7 +26,7 @@ class PageController extends Controller
                 'image' => 'images/team/team-2.jpg'
             ],
             [
-                'name' => 'Дмитрий Сидоров',
+                'name' => 'Владимир Путин',
                 'position' => 'Технический директор',
                 'description' => 'Разработчик платформы',
                 'image' => 'images/team/team-3.jpg'
